@@ -12,10 +12,11 @@ app.post('/visit', async (req, res) => {
   }
 
   try {
-    const browser = await puppeteer.launch({
+      const browser = await puppeteer.launch({
       headless: 'new',
+      executablePath: puppeteer.executablePath(),  // Important!
       args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
+      });
 
     const page = await browser.newPage();
 
