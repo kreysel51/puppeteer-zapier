@@ -1,5 +1,5 @@
 import express from 'express';
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
 
 const app = express();
 app.use(express.json());
@@ -14,7 +14,7 @@ app.post('/visit', async (req, res) => {
   try {
       const browser = await puppeteer.launch({
       headless: 'new',
-      executablePath: puppeteer.executablePath(),  // Important!
+      executablePath: '/usr/bin/chromium', // system-installed path
       args: ['--no-sandbox', '--disable-setuid-sandbox']
       });
 

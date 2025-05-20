@@ -2,7 +2,10 @@ services:
   - type: web
     name: puppeteer-zapier
     runtime: node
-    buildCommand: ./render-build.sh && npm install
+    buildCommand: |
+      apt-get update && \
+      apt-get install -y chromium && \
+      npm install
     startCommand: npm start
     plan: free
     envVars:
