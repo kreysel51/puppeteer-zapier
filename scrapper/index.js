@@ -14,10 +14,19 @@ app.post('/visit', async (req, res) => {
       executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
+    
 
     const page = await browser.newPage();
-    await page.goto(url, { waitUntil: 'networkidle2' });
-
+    await page.setUserAgent(
+  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36'
+);
+    await page.setExtraHTTPHeaders({
+  'Accept-Language': 'en-US,en;q=0.9',
+});
+await page.goto(url, {
+  waitUntil: 'domcontentloaded',
+  timeout: 60000
+});
     await page.waitForTimeout(5000);
 
     const title = await page.title();
