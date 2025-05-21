@@ -1,5 +1,5 @@
 import express from 'express';
-import puppeteer from 'puppeteer-core';
+import { chromium } from 'playwright';
 
 const app = express();
 app.use(express.json());
@@ -12,27 +12,23 @@ app.post('/visit', async (req, res) => {
   }
 
   try {
-      const browser = await puppeteer.launch({
-      headless: 'new',
-      executablePath: '/usr/bin/chromium', // system-installed path
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
-      });
-
-    const page = await browser.newPage();
+    const browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext();
+    const page = await context.newPage();
 
     console.log(`Opening ${url}...`);
-    await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
+    await page.goto(url, { waitUntil: 'networkidle' });
 
-    // Optionally wait for known ad selector (example below)
+    // Optional: wait for ad iframe (update selector if needed)
     try {
       await page.waitForSelector('iframe[src*="ads"]', { timeout: 10000 });
       console.log('Ad iframe detected.');
     } catch {
-      console.log('No ad iframe found, continuing...');
+      console.log('No ad iframe found.');
     }
 
-    // Wait 5 seconds after load
-    await new Promise(resolve => setTimeout(resolve, 5000));
+    // Wait 5 more seconds
+    await page.waitForTimeout(5000);
 
     const title = await page.title();
     await browser.close();
@@ -40,12 +36,12 @@ app.post('/visit', async (req, res) => {
     res.json({ success: true, title });
 
   } catch (err) {
-    console.error('Error during Puppeteer session:', err);
-    res.status(500).json({ error: 'Puppeteer failed', details: err.message });
+    console.error('Error:', err);
+    res.status(500).json({ error: 'Playwright failed', details: err.message });
   }
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Listening on port ${PORT}`);
+  console.log(`Listening on ${PORT}`);
 });
