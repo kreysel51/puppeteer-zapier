@@ -1,13 +1,9 @@
 services:
   - type: web
-    name: puppeteer-zapier
-    runtime: node
-    buildCommand: |
-      apt-get update && \
-      apt-get install -y chromium && \
-      npm install
+    name: playwright-scraper
+    env: node
+    rootDir: apps/scraper
+    buildCommand: ./render-build.sh
     startCommand: npm start
     plan: free
-    envVars:
-      - key: NODE_VERSION
-        value: 20
+
