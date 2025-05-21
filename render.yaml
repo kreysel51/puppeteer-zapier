@@ -1,9 +1,0 @@
-services:
-  - type: web
-    name: playwright-scraper
-    env: node
-    rootDir: apps/scraper
-    buildCommand: ./render-build.sh
-    startCommand: npm start
-    plan: free
-
